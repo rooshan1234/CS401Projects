@@ -8,4 +8,5 @@ This google docs will hold my journal entries: https://docs.google.com/document/
 <h2> Platform Task (GCM) </h2>
 <h3> Task Introduction </h3>
 <p>  </p>
-<h3> File structure </h3> 
+<h3> File structure </h3>
+<h3> Compilation Instructions <h3>
