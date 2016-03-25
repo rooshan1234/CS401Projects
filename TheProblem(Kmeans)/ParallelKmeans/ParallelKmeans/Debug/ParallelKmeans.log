@@ -1,3 +1,2 @@
 ﻿  main.cpp
-c:\users\rooshan.rooshan-pc\documents\github\cs401projects\theproblem(kmeans)\parallelkmeans\parallelkmeans\main.cpp(57): warning C4101: 'tempRandomPoint': unreferenced local variable
   ParallelKmeans.vcxproj -> C:\Users\Rooshan.Rooshan-PC\Documents\GitHub\CS401Projects\TheProblem(Kmeans)\ParallelKmeans\Debug\ParallelKmeans.exe

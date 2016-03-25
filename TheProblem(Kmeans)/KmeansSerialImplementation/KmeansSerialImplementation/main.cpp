@@ -52,7 +52,7 @@ int main() {
 			}
 		}
 	}
-	/*for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 2; i++) {
 		for (int x = 0; x < 10; x++) {
 			//calcualte euclidean distance from each point to a randomly assigned cluster
 			distance = sqrt (pow((points[x].x - cluster[i].clusterPoints[0].x),2) + pow((points[x].y - cluster[i].clusterPoints[0].y),2));
@@ -69,7 +69,7 @@ int main() {
 				points[x].assignedToCluster = i;
 			}
 		}
-	}*/
+	}
 
 	double sumx = 0;
 	double sumy = 0;
@@ -89,9 +89,11 @@ int main() {
 				clusterSize++;
 			}
 		}
+		/*
 		cout << "CLUSTER SIZE: " <<  clusterSize << endl;
 		cout << "SUMX: " << sumx << endl;
 		cout << "SUMY: " << sumy << endl;
+		*/
 
 		newCenteriordX = (double) sumx / (double) clusterSize;
 		newCenteriordY = (double) sumy / (double) clusterSize;
@@ -108,6 +110,7 @@ int main() {
 
 	}
 
+	/*
 	for (int i = 0; i < K_MEANS; i++) {
 		for (int x = 0; x < POINTS_SIZE; x++) {
 			cout << "cluster number: " << i << " contains coordinates " << "(" <<cluster[i].clusterPoints[x].x << "," << cluster[i].clusterPoints[x].y << ")" << endl;
@@ -116,11 +119,11 @@ int main() {
 		//cout << "Point: " << i << "assigned to cluster " << points[i].assignedToCluster;
 		//cout << endl;
 	}
-
+	*/
 	for (int i = 0; i < K_MEANS; i++) {
 		cout << "New Centeroid points for cluster number: " << i << " (" << cluster[i].clusterPoints[0].x << "," << cluster[i].clusterPoints[0].y << ")" << endl;
 	}
-
+	
 
 }
 void pickRandomCeteriod() {
