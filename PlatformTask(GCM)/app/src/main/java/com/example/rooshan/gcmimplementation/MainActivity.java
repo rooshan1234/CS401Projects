@@ -4,22 +4,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import org.w3c.dom.Text;
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,28 +32,68 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver mMessageReciever;
     private boolean isReceiverRegistered;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //all fields on the menu
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Button sendMessageButton= (Button) (findViewById(R.id.sendMessageButton));
+        final TextView messageRecieved = (TextView)(findViewById(R.id.messageReceivedContainer));
+
 
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
-
+        //Receive messages from GCM listener service
         mMessageReciever = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                TextView messageRecieved = (TextView)(findViewById(R.id.messageContainer));
                 messageRecieved.append(intent.getExtras().getString("Message"));
             }
         };
+
+        //Send message by pressing the send message button
+        sendMessageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText sendMessage = (EditText)(findViewById(R.id.messageSentContainer));
+                final String messageToSend = sendMessage.getText().toString();
+
+                new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... params){
+                        if (!messageToSend.isEmpty()){
+
+                            Bundle data = new Bundle();
+                            String messageId = "32"; //need to fix to auto generate a new number
+                            data.putString("data", messageToSend);
+
+                            //send the message to GCM server
+                            try {
+                                Log.i(CLASSTAG,getString(R.string.gcm_defaultSenderId) );
+                                gcm.send(getString(R.string.gcm_defaultSenderId) + "@gcm.googleapis.com", messageId, data);
+                            }catch (IOException ex){
+                                Log.i(CLASSTAG, "Message was not sent");
+                                return "Error sending upstream message: " + ex.getMessage();
+                            }
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(String result) {
+                        if (result != null) {
+                            Log.i(CLASSTAG, "send message failed: " + result);
+                        }
+                    }
+
+                }.execute(null,null,null);
+            }
+        });
 
 
         registerReceiver();
