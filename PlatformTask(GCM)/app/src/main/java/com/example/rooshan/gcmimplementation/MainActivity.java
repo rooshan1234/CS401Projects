@@ -23,6 +23,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private BroadcastReceiver mMessageReciever;
     private boolean isReceiverRegistered;
-
+    private AtomicInteger messageId = new AtomicInteger();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +70,12 @@ public class MainActivity extends AppCompatActivity {
                         if (!messageToSend.isEmpty()){
 
                             Bundle data = new Bundle();
-                            String messageId = "32"; //need to fix to auto generate a new number
                             data.putString("data", messageToSend);
 
                             //send the message to GCM server
                             try {
                                 Log.i(CLASSTAG,getString(R.string.gcm_defaultSenderId) );
-                                gcm.send(getString(R.string.gcm_defaultSenderId) + "@gcm.googleapis.com", messageId, data);
+                                gcm.send(getString(R.string.gcm_defaultSenderId) + "@gcm.googleapis.com", Integer.toString(messageId.incrementAndGet()), data);
                             }catch (IOException ex){
                                 Log.i(CLASSTAG, "Message was not sent");
                                 return "Error sending upstream message: " + ex.getMessage();
