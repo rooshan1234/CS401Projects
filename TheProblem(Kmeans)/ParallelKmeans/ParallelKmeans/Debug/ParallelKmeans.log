@@ -1,3 +1,3 @@
 ﻿  main.cpp
-  LINK : C:\Users\Rooshan.Rooshan-PC\Documents\GitHub\CS401Projects\TheProblem(Kmeans)\ParallelKmeans\Debug\ParallelKmeans.exe not found or not built by the last incremental link; performing full link
+c:\users\rooshan.rooshan-pc\documents\github\cs401projects\theproblem(kmeans)\parallelkmeans\parallelkmeans\main.cpp(265): warning C4101: 'garbage': unreferenced local variable
   ParallelKmeans.vcxproj -> C:\Users\Rooshan.Rooshan-PC\Documents\GitHub\CS401Projects\TheProblem(Kmeans)\ParallelKmeans\Debug\ParallelKmeans.exe

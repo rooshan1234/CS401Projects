@@ -15,41 +15,52 @@ std::mutex mtx;           // mutex for critical section
 void pointsAssigned();
 void pickRandomCeteriod();
 
-const int K_MEANS = 50;
+const int K_MEANS = 40;
 const int POINTS_SIZE = 5000;
 
-struct coordinate2D {
+struct coordinate3D {
 	double x;
 	double y;
+	double z;
 	double distanceToClosestCeteriod;
 	int assignedToCluster;
 };
-struct clusterPoints2D {
-	vector <coordinate2D> clusterPoints;
-	coordinate2D centerOfGravity;
+struct clusterPoints3D {
+	vector <coordinate3D> clusterPoints;
+	coordinate3D centerOfGravity;
 };
-coordinate2D points[POINTS_SIZE];
-coordinate2D clusters[K_MEANS];
+coordinate3D points[POINTS_SIZE];
+coordinate3D clusters[K_MEANS];
 
-clusterPoints2D history[2][K_MEANS];
+clusterPoints3D history[2][K_MEANS];
 
-clusterPoints2D clusterPoints[K_MEANS];
+clusterPoints3D clusterPoints[K_MEANS];
 
-void closetsclusterperpoint(int tid, coordinate2D points[], int start, int end, coordinate2D clusters[], clusterPoints2D clusterPoints[]) {
+double calculateEuclideanDistance(coordinate3D initialPoint, coordinate3D endPoint) {
+	//return euclidean distance for point in 3D space
+	return sqrt(pow((initialPoint.x - endPoint.x), 2) + 
+					pow((initialPoint.y - endPoint.y), 2) + 
+						pow((initialPoint.z - endPoint.z), 2));
+}
+
+void closetsclusterperpoint(int tid, coordinate3D points[], int start, int end, coordinate3D clusters[], clusterPoints3D clusterPoints[]) {
 	/*std::cout << "Thread: " << tid << " is going calculate the points starting from: " << start
 	<< "to: " << end << endl;*/
 
 	for (int i = start; i < end; i++) {
 		for (int x = 0; x < K_MEANS; x++) {
 
-			if (points[i].distanceToClosestCeteriod > sqrt(pow((points[i].x - clusters[x].x), 2) + pow((points[i].y - clusters[x].y), 2))) {
+			if (points[i].distanceToClosestCeteriod > calculateEuclideanDistance (points[i], clusters[x])
+				/*sqrt(pow((points[i].x - clusters[x].x), 2) + pow((points[i].y - clusters[x].y), 2))*/) {
 
-				points[i].distanceToClosestCeteriod = sqrt(pow((points[i].x - clusters[x].x), 2) + pow((points[i].y - clusters[x].y), 2));
+				points[i].distanceToClosestCeteriod = calculateEuclideanDistance(points[i], clusters[x]);
+				/*sqrt(pow((points[i].x - clusters[x].x), 2) + pow((points[i].y - clusters[x].y), 2))*/
 				points[i].assignedToCluster = x;
 
 			}
-			else if (points[i].distanceToClosestCeteriod == sqrt(pow((points[i].x - clusters[x].x), 2) + pow((points[i].y - clusters[x].y), 2))) {
-				//stay in the same cluster
+			else if (points[i].distanceToClosestCeteriod == calculateEuclideanDistance(points[i], clusters[x])
+				/*sqrt(pow((points[i].x - clusters[x].x), 2) + pow((points[i].y - clusters[x].y), 2))*/ ) {
+				//stay in the same cluster, so the algorithm does not keep jumping between clusters
 				points[i].assignedToCluster = points[i].assignedToCluster;
 			}
 		}
@@ -61,15 +72,16 @@ void closetsclusterperpoint(int tid, coordinate2D points[], int start, int end, 
 	}
 }
 
-void calculateCenterOfGravity(int tid, clusterPoints2D clusterPoints[], int clusterNumber) {
+void calculateCenterOfGravity(int tid, clusterPoints3D clusterPoints[], int clusterNumber) {
 
 	for (unsigned int x = 0; x < clusterPoints[clusterNumber].clusterPoints.size(); x++) {
 		clusterPoints[clusterNumber].centerOfGravity.x += clusterPoints[clusterNumber].clusterPoints.at(x).x;
 		clusterPoints[clusterNumber].centerOfGravity.y += clusterPoints[clusterNumber].clusterPoints.at(x).y;
+		clusterPoints[clusterNumber].centerOfGravity.z += clusterPoints[clusterNumber].clusterPoints.at(x).z;
 	}
-
 	clusterPoints[clusterNumber].centerOfGravity.x = clusterPoints[clusterNumber].centerOfGravity.x / clusterPoints[clusterNumber].clusterPoints.size();
 	clusterPoints[clusterNumber].centerOfGravity.y = clusterPoints[clusterNumber].centerOfGravity.y / clusterPoints[clusterNumber].clusterPoints.size();
+	clusterPoints[clusterNumber].centerOfGravity.z = clusterPoints[clusterNumber].centerOfGravity.z / clusterPoints[clusterNumber].clusterPoints.size();
 }
 
 
@@ -114,8 +126,6 @@ int main() {
 		//cout << "x " << clusters[i].x << "y " << clusters[i].y << endl;
 	}
 
-
-
 	/*THREADING*/
 
 	std::thread t[K_MEANS];
@@ -127,13 +137,6 @@ int main() {
 		//cout << "i: " << i*divisions << " ";
 		//cout << "i+1: " << ((i + 1)*divisions)-1 << endl;
 	}
-
-	/*for (int i = 0; i < K_MEANS; i++) {
-	for (int x = 0; x < history[1][i].clusterPoints.size(); x++) {
-	history[0][i].clusterPoints.at(x).assignedToCluster = 0;
-	history[1][i].clusterPoints.at(x).assignedToCluster = 0;
-	}
-	}*/
 
 	unsigned int andBit;
 
@@ -209,7 +212,10 @@ int main() {
 
 	for (int i = 0; i < K_MEANS; i++) {
 		for (unsigned int x = 0; x < history[1][i].clusterPoints.size(); x++) {
-			outputfile << history[1][i].clusterPoints.at(x).x << ", " << history[1][i].clusterPoints.at(x).y << endl;
+			outputfile << history[1][i].clusterPoints.at(x).x << ", " 
+						<< history[1][i].clusterPoints.at(x).y << ", "
+							<< history[1][i].clusterPoints.at(x).z 
+								<< endl;
 			//cout << "Point: (" << history[1][i].clusterPoints.at(x).x << " ," << history[1][i].clusterPoints.at(x).y << ")";
 		}
 		outputfile << endl;
@@ -256,18 +262,21 @@ void pointsAssigned() {
 	}
 
 	ifstream pointsfile("points.txt");
-	string garbage;
+	char garbage;
 
 	for (int i = 0; i < POINTS_SIZE; i++) {
 		pointsfile >> points[i].x;
+		//pointsfile >> garbage;
 		pointsfile >> points[i].y;
+		//pointsfile >> garbage;
+		pointsfile >> points[i].z;
 	}
 
-	/*
+	
 	for (int i = 0; i < POINTS_SIZE; i++) {
-	cout << points[i].x << points[i].y << endl;
+	cout << points[i].x << points[i].y << points[i].z << endl;
 
-	}*/
+	}
 
 	pointsfile.close();
 	/*
