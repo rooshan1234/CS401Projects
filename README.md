@@ -1,5 +1,3 @@
-<h1> CS401 (Advanced Digital Systems Architecture)</h1>
-
 <h2> Repository Introduction </h2>
 This repository consists two independent projects:
 
@@ -26,11 +24,10 @@ GCM consists of three main components:
 5.	Move google-services.json into the root directory of the client application which is located where you saved the extracted Client Application folder/app/ in that directory. For example if your Client Application is in downloads you would put the google-services.json into ~/Download/Client/\ Application.
 6.	Next build the application using android studio and run the application (either on your android phone or the build in simulator in android studio).
 
-<h3> Project Dependences<h3>
+<h3> Task Dependences </h3>
 * Andriod Studio >= 1.5.1
 * Gradle >= 1.5.0
 * gms:google-services >= 8.4.0
 * appcompat >= v7:23.1.1
 * jdk >= 1.8.0_66
 * Compile-SDK-Version = Andriod 6.0 (Marshmallow)  - Android 4.0.3 (Icecream Sandwich)
-
