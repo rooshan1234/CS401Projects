@@ -16,6 +16,10 @@ GCM consists of three main components:
 2. **GCM server**: Acts as a mediatory server between the client application and the application server, handles messaging queuing, and transfer of messages.
 3. **Client application**: Used to send or receive messages from the GCM server (in this case it was an android application, running on lollipop).
 
+<h3> Screen shot(s) </h3>
+<img src="https://cloud.githubusercontent.com/assets/8277862/16054055/af395f7a-3228-11e6-8b44-081883611524.png" width="290" height="528"/>
+
+
 <h3> Compilation Instructions </h3>
 1.	Import PlatformTask(GCM) into android studio and make sure all the dependences for client application are met
 2.	Go to https://developers.google.com/mobile/add?platform=android&cntapi=gcm&cnturl=https:%2F%2Fdevelopers.google.com%2Fcloud-messaging%2Fandroid%2Fclient&cntlbl=Continue%20Adding%20GCM%20Support&%3Fconfigured%3Dtrue and generate
